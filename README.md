@@ -6,7 +6,7 @@ for model
   -> create dir output_lstm
 
 for 
-  -> create dir output_bays_filter
+  -> create dir output_baye_filter
 
 for datasheet dir
   -> create dir greenhouse
