@@ -19,7 +19,7 @@ from sklearn.model_selection import TimeSeriesSplit
 
 # Set the directory and round number for this optimization
 dir_name = 'output_baye_filter'
-round = "9"
+round = "1"
 
 # Consider GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,7 +30,7 @@ os.makedirs(dir_name, exist_ok=True)
 os.makedirs(f'{dir_name}/{round}', exist_ok=True)
 
 # Load the dataset
-df = pd.read_csv("D:\\Project\\RelativeHumidity-LSTM-main\\greenhouse\\datasheet4_resampling_with_condition.csv", encoding="utf8")
+df = pd.read_csv("D:\\65109076\\LSTM_Model\\greenhouse\\datasheet4_resampling_4885.csv", encoding="utf8")
 
 print('original data:')
 print(df.describe().to_string(), "\n")
@@ -38,26 +38,26 @@ print(df.describe().to_string(), "\n")
 # Set index to datetime using column 'Timestamp'
 df['Timestamp'] = pd.to_datetime(df['Timestamp'], format='%d/%m/%Y %H:%M', dayfirst=True)
 
-df['SoilMoistureIndex'] = LabelEncoder().fit_transform(df['SoilMoistureIndex'])
-df['WeatherCondition'] = LabelEncoder().fit_transform(df['WeatherCondition'])
-
-df['Treatment'] = df['Treatment'].astype(float)
-df['SoilMoistureIndex'] = df['SoilMoistureIndex'].astype(float)
-df['WeatherCondition'] = df['WeatherCondition'].astype(float)
+# df['SoilMoistureIndex'] = LabelEncoder().fit_transform(df['SoilMoistureIndex'])
+# df['WeatherCondition'] = LabelEncoder().fit_transform(df['WeatherCondition'])
+#
+# df['Treatment'] = df['Treatment'].astype(float)
+# df['SoilMoistureIndex'] = df['SoilMoistureIndex'].astype(float)
+# df['WeatherCondition'] = df['WeatherCondition'].astype(float)
 
 # Data Summary
 print('Format data:')
 print(df.describe().to_string(), "\n")
 
 # Select features (now multiple input features)
-# input_features = [
-#             'Temp', 'Humid', 'LightIntensity', 'Treatment'
-# ]
-
 input_features = [
-            'Temp', 'Humid', 'LightIntensity', 'Treatment', 'SoilHumid', 'WeatherCondition'
+            'Temp', 'Humid', 'LightIntensity', 'Treatment'
 ]
-target_feature = 'SoilMoistureIndex'
+
+# input_features = [
+#             'Temp', 'Humid', 'LightIntensity', 'Treatment', 'SoilHumid', 'WeatherCondition'
+# ]
+target_feature = 'SoilHumid'
 
 # Remove outliers
 df = df[input_features + [target_feature]]
@@ -220,7 +220,7 @@ def run_optimization(tuning_method='bayes'):
             Real(0.001, 0.05, prior='log-uniform', name='learning_rate'),
             Real(0.1, 0.5, name='dropout'),
             Integer(32, 128, name='batch_size'),
-            Integer(50, 500, name='epochs')
+            Integer(100, 1500, name='epochs')
         ]
 
         def objective(params):
