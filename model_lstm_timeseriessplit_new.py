@@ -20,7 +20,7 @@ from sklearn.model_selection import TimeSeriesSplit
 
 # Set the directory and round number for this optimization
 dir_name = 'output_baye_filter'
-round = "3"
+round = "1"
 
 # Consider GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -40,15 +40,6 @@ print(df.describe().to_string(), "\n")
 df['Timestamp'] = pd.to_datetime(df['Timestamp'], format='%d/%m/%Y %H:%M', dayfirst=True)
 
 #################### Filter Data START ####################
-# only consider the data from 06:00 to 18:00
-df = df[(df['Timestamp'].dt.hour >= 6) & (df['Timestamp'].dt.hour < 18)]
-
-# Select AC_1_Filter = 1, AC_2_Filter = 1, AC_3_Filter = 1, AC_4_Filter = 1
-# df = df[(df['AC_1_Filter'] == 1) & (df['AC_2_Filter'] == 1) & (df['AC_3_Filter'] == 1) & (df['AC_4_Filter'] == 1)]
-
-# Select Window_State = 0, Door_State = 0
-# df = df[(df['Window_State'] == 0) & (df['Door_State'] == 0)]
-
 # Data Summary
 print('filtered data:')
 print(df.describe().to_string(), "\n")
@@ -219,12 +210,12 @@ def run_optimization(tuning_method='bayes'):
     if tuning_method == 'bayes':
         search_space = [
             Integer(1, 7, name='lookback'),
-            Integer(25, 100, name='hidden_size'),
+            Integer(25, 128, name='hidden_size'),
             Integer(1, 5, name='num_layers'),
             Real(0.001, 0.05, prior='log-uniform', name='learning_rate'),
             # Real(0.0, 0.2, name='dropout'),
             Integer(32, 128, name='batch_size'),
-            Integer(50, 300, name='epochs')
+            Integer(100, 1000, name='epochs')
         ]
 
         def objective(params):
